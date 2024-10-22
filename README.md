@@ -1,7 +1,4 @@
-8-Week SQL Challenge
-Star Badge View Main Folder View Repositories View My Profile
-
-🍜 Case Study #1 - Danny's Diner
+# 🍜 Case Study #1 - Danny's Diner
 
 
 📕 Table Of Contents
