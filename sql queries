@@ -1,5 +1,4 @@
---Ques1. What is the total amount each customer spent at the restaurant?
-
+-- Ques1. Total Amount Each Customer Spent at the Restaurant
 SELECT customer_id, SUM(price) AS total_amount_spent_by_each_customer
 FROM sales s
 JOIN menu m 
