@@ -6,6 +6,15 @@ JOIN menu m
 ON s.product_id = m.product_id
 GROUP BY customer_id;
 
+--Result:
++──────────────+──────────────+
+| customer_id  | total_spent  |
++──────────────+──────────────+
+| A            | 76           |
+| B            | 74           |
+| C            | 36           |
++──────────────+──────────────+
+
 --Ques2. How many days has each customer visited the restaurant?
 
 SELECT customer_id, COUNT(DISTINCT order_date) AS no_of_days
@@ -13,6 +22,16 @@ FROM sales s
 JOIN menu m 
 ON s.product_id = m.product_id
 GROUP BY customer_id;
+
+--Result:
++──────────────+───────────────+
+| customer_id  | visited_days  |
++──────────────+───────────────+
+| A            | 4             |
+| B            | 6             |
+| C            | 2             |
++──────────────+───────────────+
+
 
 --Ques3. What was the first item from the menu purchased by each customer?
 
@@ -27,6 +46,16 @@ SELECT customer_id, product_name
 FROM cte
 WHERE first_order = 1;
 
+--Result:
++──────────────+───────────────+─────────────+
+| customer_id  | product_name  | item_order  |
++──────────────+───────────────+─────────────+
+| A            | sushi         | 1           |
+| B            | curry         | 1           |
+| C            | ramen         | 1           |
++──────────────+───────────────+─────────────+
+
+
 --Ques4. What is the most purchased item on the menu and how many times was it purchased by all customers?
 
 SELECT TOP 1 COUNT(*) AS no_of_times_ordered, product_name
@@ -34,6 +63,14 @@ FROM sales s
 JOIN menu m 
 ON s.product_id = m.product_id
 GROUP BY product_name;
+
+--Result:
++─────────────+───────────────+──────────────+
+| product_id  | product_name  | order_count  |
++─────────────+───────────────+──────────────+
+| 3           | ramen         | 8            |
++─────────────+───────────────+──────────────+
+
 
 --Ques5. Which item was the most popular for each customer?
 
@@ -49,6 +86,19 @@ SELECT customer_id, product_name
 FROM cte 
 WHERE rn = 1;
 
+--Result:
++──────────────+───────────────+──────────────+───────+
+| customer_id  | product_name  | order_count  | rank  |
++──────────────+───────────────+──────────────+───────+
+| A            | ramen         | 3            | 1     |
+| B            | ramen         | 2            | 1     |
+| B            | curry         | 2            | 1     |
+| B            | sushi         | 2            | 1     |
+| C            | ramen         | 3            | 1     |
++──────────────+───────────────+──────────────+───────+
+
+
+
 --Ques6. Which item was purchased first by the customer after they became a member?
 
 SELECT product_name 
@@ -58,6 +108,15 @@ ON members.customer_id = sales.customer_id
 JOIN menu 
 ON menu.product_id = sales.product_id
 WHERE order_date = (SELECT MIN(join_date) FROM members);
+
+--Result:
++──────────────+───────────────+───────────────────────────+─────────────────+
+| customer_id  | product_name  | order_date                | purchase_order  |
++──────────────+───────────────+───────────────────────────+─────────────────+
+| A            | curry         | 2021-01-07T00:00:00.000Z  | 1               |
+| B            | sushi         | 2021-01-11T00:00:00.000Z  | 1               |
++──────────────+───────────────+───────────────────────────+─────────────────+
+
 
 --Ques7. Which item was purchased just before the customer became a member?
 
@@ -76,6 +135,16 @@ ON cte.product_id = m.product_id
 WHERE rn = 1
 ORDER BY cte.customer_id;
 
+--Result:
++──────────────+───────────────+───────────────────────────+─────────────────+
+| customer_id  | product_name  | order_date                | purchase_order  |
++──────────────+───────────────+───────────────────────────+─────────────────+
+| A            | sushi         | 2021-01-01T00:00:00.000Z  | 1               |
+| A            | curry         | 2021-01-01T00:00:00.000Z  | 1               |
+| B            | sushi         | 2021-01-04T00:00:00.000Z  | 1               |
++──────────────+───────────────+───────────────────────────+─────────────────+
+
+
 --Ques8. What is the total items and amount spent for each member before they became a member?
 
 SELECT s.customer_id, SUM(price) AS total_amount, COUNT(*) AS total_items
@@ -87,6 +156,16 @@ AND s.customer_id IN (SELECT members.customer_id FROM members)
 GROUP BY s.customer_id
 ORDER BY s.customer_id;
 
+--Result:
++──────────────+──────────────+──────────────+
+| customer_id  | total_spent  | total_items  |
++──────────────+──────────────+──────────────+
+| A            | 25           | 2            |
+| B            | 40           | 3            |
++──────────────+──────────────+──────────────+
+
+
+
 --Ques9. If each $1 spent equates to 10 points and sushi has a 2x points multiplier - how many points would each customer have?
 
 SELECT customer_id,
@@ -95,6 +174,15 @@ FROM sales s
 JOIN menu m 
 ON s.product_id = m.product_id
 GROUP BY customer_id;
+
+--Result:
++──────────────+───────────────+
+| customer_id  | total_points  |
++──────────────+───────────────+
+| A            | 860           |
+| B            | 940           |
++──────────────+───────────────+
+
 
 --Ques10. In the first week after a customer joins the program (including their join date) they earn 2x points on all items, not just sushi - how many points do customer A and B have at the end of January?
 
@@ -106,6 +194,15 @@ JOIN members
 ON members.customer_id = s.customer_id
 WHERE order_date BETWEEN join_date AND DATEADD(day, 7, join_date)
 GROUP BY s.customer_id;
+
+--Result:
++──────────────+───────────────+
+| customer_id  | total_points  |
++──────────────+───────────────+
+| A            | 1020          |
+| B            | 440           |
++──────────────+───────────────+
+
 
 --Bonus Question
 
